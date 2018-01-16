@@ -1,0 +1,6 @@
+logs/
+.idea/
+.cache/
+*.pyc
+config.gsil
+rules.gsil

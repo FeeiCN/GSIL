@@ -1,0 +1,7 @@
+beautifulsoup4==4.6.0
+PyGithub==1.35
+IPy==0.83
+tld==0.7.9
+html5lib==0.999999999
+requests==2.12.4
+colorlog==3.1.0
