@@ -5,3 +5,4 @@ tld==0.7.9
 html5lib==0.999999999
 requests==2.12.4
 colorlog==3.1.0
+Jinja2==2.9.4

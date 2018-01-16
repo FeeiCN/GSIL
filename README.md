@@ -4,6 +4,8 @@
 > 近实时监控Github敏感信息泄露，并发送告警通知。
 
 ## Installation(安装)
+> 仅在Python3下验证过
+
 ```
 git clone https://github.com/FeeiCN/gsil.git
 cd gsil/
