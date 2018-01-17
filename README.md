@@ -1,20 +1,24 @@
 # GSIL(GitHub Sensitive Information Leak)
+
+[中文文档](https://github.com/BlackHole1/GSIL/blob/master/README-zh.md)
+
 > Monitor Github sensitive information leaks in near real time and send alert notifications.
 
-> 近实时监控Github敏感信息泄露，并发送告警通知。
+## Installation
 
-## Installation(安装)
-> 仅在Python3下验证过
+> Python3(Python2 is not tested)
 
-```
-git clone https://github.com/FeeiCN/gsil.git
-cd gsil/
-pip install -r requirements.txt
+```bash
+$ git clone https://github.com/FeeiCN/gsil.git
+$ cd gsil/
+$ pip install -r requirements.txt
 ```
 
-## Configuration(配置)
-#### gsil/config.gsil: 告警邮箱和Github配置
-```
+## Configuration
+
+### gsil/config.gsil: Alarm mailbox and Guthub configuration
+
+```conf
 [mail]
 host : smtp.exmail.qq.com
 port : 25
@@ -24,55 +28,56 @@ password : your_password
 to : feei@feei.cn
 
 [github]
-# 扫描到的是否立刻Clone到本地
+# Whether the scanned data will be cloned to the local area immediately
 clone: false
 
-# Github Token用来调用相关API
+# Github Token
 # https://github.com/settings/tokens
 tokens : your_token
-
 ```
-#### gsil/rules.gsil: 扫描规则
-> 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
-> 其它还有类似代码头部特征、外部邮箱特征等
 
-| 字段 | 意义 | 选填 | 默认 | 描述 |
+### gsil/rules.gsil: scanning rules
+
+> Generally, The best rule is the characteristic code of the intranet(Example: mogujie's extranet is `mogujie.com`, intranet is `mogujie.org`. At this time, `mogujie.org` can be used as a rule)
+
+> There are other similar code head characteristic code, external mailbox characteristic code, and so on
+
+| field | meaning | optional | default | describe |
 | --- | --- | --- | --- | --- |
-| keyword | 关键词 | 必填 | - | 多个关键词可以用空格，比如‘账号 密码’；某些关键字出现的结果非常多，所以需要精确搜索时可以用双引号括起来，比如‘”ele.me“’；|
-| ext | 指定文件后缀 | 可选 | 全部后缀 | 多个后缀可以使用英文半角逗号（,）分隔，比如`java,php,python` |
-| mode |  匹配模式 | 可选 | 正常匹配 | 正常匹配：匹配包含keyword的行，并记录该行附近行 / 仅匹配：仅匹配包含keyword行 / 全部匹配（不推荐使用）：搜出来的整个问题都算作结果 |
+| keyword | key word | required | - | When multiple keywords are used, space segmentation is used(Example: `'username password'`), When you need a precise search, use double(Example: `"quotesele.me"`) |
+| ext | file suffix | optional | all suffixes | Multiple suffixes are separated by comma(Example: `java,php,python`) |
+| mode |  matching mode | optional | normal-match | `normal-match`(The line that contains the keyword is matched, and the line near the line is matched) / `only-match`(Only the lines that match the key words7) / `full-match`(Not recommended for use)(The search results show the entire file)|
 
 ```
 {
-    # 一级分类，一般使用公司名，用作开启扫描的第一个参数（python gsil.py test）
+    # usually using the company name, used as the first parameter to open the scan(Example:`python gsil.py test`)
     "test": {
-        # 二级分类，一般使用产品线
+        # General use of product name
         "mogujie.com": {
-            # 公司内部域名
+            # Internal domain name of the company
             "\"mogujie.org\"": {},
-            # 公司代码特征
+            # Company code's characteristic code
             "copyright meili inc": {},
-            # 内部主机域名
+            # Internal host domain name
             "yewu1.db.mogujie.host": {},
-            # 外部邮箱
+            # External mailbox
             "mail.mogujie.com": {}
         }
     }
 }
 ```
 
+## Usage
 
-## Usage(用法)
-
-```
-python gsil.py test
+```bash
+$ python gsil.py test
 ```
 
 ```bash
 $ crontab -e
 
-# 每个小时运行一次
+# Run every hour
 0 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
-# 每天晚上11点发送统计报告
+# Send a statistical report at 11 p. m. every night
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
