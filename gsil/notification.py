@@ -46,6 +46,7 @@ class Notification(object):
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
         msg['From'] = '{0} <{1}>'.format(mail, get('mail', 'from'))
+        # 支持多用户接收邮件
         msg['To'] = self.to
 
         text = MIMEText(html, 'html', 'utf-8')
@@ -57,10 +58,12 @@ class Notification(object):
             s.starttls()
             s.ehlo()
             s.login(mail, get('mail', 'password'))
-            s.sendmail(mail, self.to, msg.as_string())
+            s.sendmail(mail, self.to.split(','), msg.as_string())
             s.quit()
             return True
         except SMTPException:
             logger.critical('Send mail failed')
             traceback.print_exc()
             return False
+
+
