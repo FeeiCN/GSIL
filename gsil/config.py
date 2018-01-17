@@ -43,7 +43,7 @@ def get(level1=None, level2=None):
     except Exception as e:
         print(level1, level2)
         traceback.print_exc()
-        print("gsil/config.ini file configure failed.\nError: {0}".format(e))
+        print("GSIL/config.gsil file configure failed.\nError: {0}".format(e))
     return value
 
 
@@ -139,7 +139,7 @@ try:
     with open(rules_path) as f:
         rules_dict = json.load(f)
 except Exception as e:
-    logger.critical('please config gsil/rules.gsil!')
+    logger.critical('please config GISL/rules.gsil!')
     logger.critical(traceback.format_exc())
 
 
