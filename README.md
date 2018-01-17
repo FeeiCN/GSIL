@@ -1,6 +1,6 @@
 # GSIL(GitHub Sensitive Information Leak)
 
-[中文文档](https://github.com/BlackHole1/GSIL/blob/master/README-zh.md)
+[中文文档](https://github.com/FeeiCN/GSIL/blob/master/README-zh.md)
 
 > Monitor Github sensitive information leaks in near real time and send alert notifications.
 
