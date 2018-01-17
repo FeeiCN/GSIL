@@ -21,6 +21,7 @@ $ pip install -r requirements.txt
 ```
 [mail]
 host : smtp.exmail.qq.com
+# SMTP端口(非SSL端口，但会使用TLS加密)
 port : 25
 # 多个发件人使用逗号(,)分隔
 mails : gsil@domain.com

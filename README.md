@@ -21,6 +21,7 @@ $ pip install -r requirements.txt
 ```conf
 [mail]
 host : smtp.exmail.qq.com
+# SMTP port (Not SSL port, but will use TLS encryption)
 port : 25
 # Multiple senders are separated by comma (,)
 mails : gsil@domain.com
