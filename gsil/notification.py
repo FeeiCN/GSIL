@@ -65,5 +65,3 @@ class Notification(object):
             logger.critical('Send mail failed')
             traceback.print_exc()
             return False
-
-
