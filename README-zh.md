@@ -22,16 +22,18 @@ $ pip install -r requirements.txt
 [mail]
 host : smtp.exmail.qq.com
 port : 25
+# 多个发件人使用逗号(,)分隔
 mails : gsil@domain.com
 from : GSIL
 password : your_password
+# 多个收件人使用逗号(,)分隔
 to : feei@feei.cn
 
 [github]
 # 扫描到的是否立刻Clone到本地
 clone: false
 
-# Github Token用来调用相关API
+# Github Token用来调用相关API，多个Token使用逗号(,)分隔
 # https://github.com/settings/tokens
 tokens : your_token
 ```
