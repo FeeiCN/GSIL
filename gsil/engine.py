@@ -150,11 +150,11 @@ class Engine(object):
         self.next_count = 0
 
         # max 5000 requests/H
-        rate_limiting = self.g.rate_limiting
-        rate_limiting_reset_time = self.g.rate_limiting_resettime
-        logger.info('----------------------------')
-
         try:
+            rate_limiting = self.g.rate_limiting
+            rate_limiting_reset_time = self.g.rate_limiting_resettime
+            logger.info('----------------------------')
+
             # RATE_LIMIT_REQUEST: rules * 1
             # https://developer.github.com/v3/search/#search-code
             ext_query = ''
