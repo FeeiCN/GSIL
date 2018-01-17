@@ -139,7 +139,7 @@ try:
     with open(rules_path) as f:
         rules_dict = json.load(f)
 except Exception as e:
-    logger.critical('please config GISL/rules.gsil!')
+    logger.critical('please config GSIL/rules.gsil!')
     logger.critical(traceback.format_exc())
 
 
