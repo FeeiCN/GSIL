@@ -1,4 +1,4 @@
-# GSIL(GitHub Sensitive Information Leak)
+# GSIL(GitHub Sensitive Information Leakage)
 
 [中文文档](https://github.com/FeeiCN/GSIL/blob/master/README-zh.md)
 
@@ -49,7 +49,7 @@ tokens : your_token
 | --- | --- | --- | --- | --- |
 | keyword | key word | required | - | When multiple keywords are used, space segmentation is used(Example: `'username password'`), When you need a precise search, use double(Example: `"quotesele.me"`) |
 | ext | file suffix | optional | all suffixes | Multiple suffixes are separated by comma(Example: `java,php,python`) |
-| mode |  matching mode | optional | normal-match | `normal-match`(The line that contains the keyword is matched, and the line near the line is matched) / `only-match`(Only the lines that match the key words7) / `full-match`(Not recommended for use)(The search results show the entire file)|
+| mode |  matching mode | optional | normal-match | `normal-match`(The line that contains the keyword is matched, and the line near the line is matched) / `only-match`(Only the lines that match the key words) / `full-match`(Not recommended for use)(The search results show the entire file)|
 
 ```
 {
@@ -84,3 +84,6 @@ $ crontab -e
 # Send a statistical report at 11 p. m. every night
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+
+## Reference
+- [GitHub Sensitive Information Leakage Monitor](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
