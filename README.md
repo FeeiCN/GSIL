@@ -84,6 +84,7 @@ $ crontab -e
 # Send a statistical report at 11 p. m. every night
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+* Once the scan report will not repeat the report, the cache records in ~/.gsil/ directory *
 
 ## Reference
 - [GitHub Sensitive Information Leakage Monitor](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
