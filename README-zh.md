@@ -84,6 +84,7 @@ $ crontab -e
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+*扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
 - [GitHub敏感信息泄露监控](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
