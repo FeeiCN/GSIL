@@ -84,3 +84,6 @@ $ crontab -e
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+
+## 引用
+- [GitHub敏感信息泄露监控](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
