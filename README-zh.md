@@ -1,8 +1,8 @@
-# GSIL(Github敏感信息泄露)
+# GSIL(GitHub敏感信息泄露)
 
 [English documents](https://github.com/BlackHole1/GSIL/blob/master/README.md)
 
-> 近实时监控Github敏感信息泄露，并发送告警通知。
+> 近实时监控GitHub敏感信息泄露，并发送告警通知。
 
 ## 安装
 
@@ -34,7 +34,7 @@ to : feei@feei.cn
 # 扫描到的是否立刻Clone到本地
 clone: false
 
-# Github Token用来调用相关API，多个Token使用逗号(,)分隔
+# GitHub Token用来调用相关API，多个Token使用逗号(,)分隔
 # https://github.com/settings/tokens
 tokens : your_token
 ```
