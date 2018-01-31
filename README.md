@@ -81,3 +81,12 @@ $ crontab -e
 # Send a statistical report at 11 p. m. every night
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+
+## Contributing
+
+| **Commits** | **Contributor** | 
+| --- | --- |
+| 25 | [FeeiCN](https://github.com/FeeiCN/GSIL/graphs/contributors) |
+| 3 | [sunnyelf](https://github.com/sunnyelf) |
+| 1 | [h4rdy](https://github.com/h4rdy) |
+| 2 | [Black-Hole](https://github.com/BlackHole1) |

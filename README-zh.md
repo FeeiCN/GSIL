@@ -81,3 +81,12 @@ $ crontab -e
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
+
+## 贡献者名单
+
+| **提交次数** | **贡献者** | 
+| --- | --- |
+| 25 | [FeeiCN](https://github.com/FeeiCN/GSIL/graphs/contributors) |
+| 3 | [sunnyelf](https://github.com/sunnyelf) |
+| 1 | [h4rdy](https://github.com/h4rdy) |
+| 2 | [Black-Hole](https://github.com/BlackHole1) |
