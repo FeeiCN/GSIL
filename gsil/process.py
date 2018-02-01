@@ -75,7 +75,7 @@ class Process(object):
         :param data:
         :return:
         """
-        with open(os.path.join(Config().data_path, sha), 'w+') as f:
+        with open(os.path.join(Config().data_path, sha), 'w+', encoding='utf-8') as f:
             f.writelines(data)
         return True
 
