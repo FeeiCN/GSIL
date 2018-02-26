@@ -70,7 +70,8 @@ exclude_repository_rules = [
     # 爬虫
     r'(crawler)|(spider)|(scrapy)|(爬虫)',
     # 文档
-    r'((开发文档)|(api)|(doc))',
+    # doc可能存在误报
+    r'((开发文档)|(api))',
     # 软件作者
     r'(jquery)|(contact)|(readme)|(authors)',
     # 软件配置
