@@ -1,7 +1,10 @@
 {
     "test": {
         "mogujie.com": {
-            "\"mogujie.org\"": {}
+            "\"mogujie.org\"": {
+                "mode": "normal-match",
+                "ext": "php,java,python,go,js,properties"
+            }
         }
     }
 }
