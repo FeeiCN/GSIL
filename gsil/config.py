@@ -72,7 +72,7 @@ exclude_repository_rules = [
     # 文档
     r'((开发文档)|(api)|(doc))',
     # 无用东西
-    r'(linux_command_set)|(domains)|(jquery)|(sdk)|(linux)|(contact)|(readme)|(surge)|(adblock)|(hosts)|(\.pac)|(authors)|(\.html)|(\.apk)|(domain-list)|(easylist)|(urls)|(tracking_servers)|(ads)|(blacklist)|(easylist)|(http_analytic)',
+    r'(linux_command_set)|(domains)|(jquery)|(sdk)|(linux)|(contact)|(readme)|(surge)|(adblock)|(hosts)|(\.pac)|(authors)|(\.html)|(\.apk)|(domain-list)|(easylist)|(urls)|(tracking_servers)|(ads)|(blacklist)|(easylist)|(http_analytic)|(filtersregistry)|(package\.json)|(podspec\.json)',
 ]
 
 exclude_codes_rules = [
