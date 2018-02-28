@@ -58,7 +58,11 @@ tokens : your_token
         # General use of product name
         "mogujie.com": {
             # Internal domain name of the company
-            "\"mogujie.org\"": {},
+            "\"mogujie.org\"": {
+                # mode/ext options no need to configure by default
+                "mode": "normal-match",
+                "ext": "php,java,python,go,js,properties"
+            },
             # Company code's characteristic code
             "copyright meili inc": {},
             # Internal host domain name
