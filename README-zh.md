@@ -79,7 +79,7 @@ $ python gsil.py test
 ```bash
 $ crontab -e
 
-# 每个小时运行一次
+# 每个小时运行一次，GitHub API接口调用频率限制可以根据token数量、规则数量来调整crontab频率实现，若觉得麻烦可简单配置多个token来实现。
 0 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
