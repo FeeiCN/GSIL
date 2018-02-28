@@ -58,7 +58,11 @@ tokens : your_token
         # 二级分类，一般使用产品线
         "mogujie.com": {
             # 公司内部域名
-            "\"mogujie.org\"": {},
+            "\"mogujie.org\"": {
+                # mode/ext默认可不填
+                "mode": "normal-match",
+                "ext": "php,java,python,go,js,properties"
+            },
             # 公司代码特征
             "copyright meili inc": {},
             # 内部主机域名
