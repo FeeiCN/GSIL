@@ -91,4 +91,4 @@ $ crontab -e
 * Once the scan report will not repeat the report, the cache records in ~/.gsil/ directory *
 
 ## Reference
-- [GitHub Sensitive Information Leakage Monitor](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
+- http://feei.cn/GitHub敏感信息泄露监控.html
