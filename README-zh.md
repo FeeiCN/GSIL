@@ -91,4 +91,4 @@ $ crontab -e
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
-- http://feei.cn/GitHub敏感信息泄露监控.html
+- http://feei.cn/GitHub敏感信息泄露监控
