@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## Configuration
 
-### gsil/config.gsil: Alarm mailbox and Guthub configuration
+### gsil/config.gsil(Rename by config.gsil.example): Alarm mailbox and Guthub configuration
 
 ```conf
 [mail]
@@ -39,7 +39,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil: scanning rules
+### gsil/rules.gsil(Rename by rules.gsil.example): scanning rules
 
 > Generally, The best rule is the characteristic code of the intranet(Example: mogujie's extranet is `mogujie.com`, intranet is `mogujie.org`. At this time, `mogujie.org` can be used as a rule)
 
@@ -58,7 +58,11 @@ tokens : your_token
         # General use of product name
         "mogujie.com": {
             # Internal domain name of the company
-            "\"mogujie.org\"": {},
+            "\"mogujie.org\"": {
+                # mode/ext options no need to configure by default
+                "mode": "normal-match",
+                "ext": "php,java,python,go,js,properties"
+            },
             # Company code's characteristic code
             "copyright meili inc": {},
             # Internal host domain name
@@ -87,4 +91,4 @@ $ crontab -e
 * Once the scan report will not repeat the report, the cache records in ~/.gsil/ directory *
 
 ## Reference
-- [GitHub Sensitive Information Leakage Monitor](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
+- http://feei.cn/GitHub敏感信息泄露监控

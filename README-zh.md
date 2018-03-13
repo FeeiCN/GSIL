@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## 配置
 
-### gsil/config.gsil: 告警邮箱和Github配置
+### gsil/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
 
 ```
 [mail]
@@ -39,7 +39,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil: 扫描规则
+### gsil/rules.gsil(重命名自rules.gsil.example): 扫描规则
 
 > 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
 
@@ -58,7 +58,11 @@ tokens : your_token
         # 二级分类，一般使用产品线
         "mogujie.com": {
             # 公司内部域名
-            "\"mogujie.org\"": {},
+            "\"mogujie.org\"": {
+                # mode/ext默认可不填
+                "mode": "normal-match",
+                "ext": "php,java,python,go,js,properties"
+            },
             # 公司代码特征
             "copyright meili inc": {},
             # 内部主机域名
@@ -79,7 +83,7 @@ $ python gsil.py test
 ```bash
 $ crontab -e
 
-# 每个小时运行一次
+# 每个小时运行一次，GitHub API接口调用频率限制可以根据token数量、规则数量来调整crontab频率实现，若觉得麻烦可简单配置多个token来实现。
 0 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
@@ -87,4 +91,4 @@ $ crontab -e
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
-- [GitHub敏感信息泄露监控](http://papers.feei.cn/GitHub敏感信息泄露监控.html)
+- http://feei.cn/GitHub敏感信息泄露监控
