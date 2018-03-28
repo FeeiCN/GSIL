@@ -237,7 +237,7 @@ class Engine(object):
                     if keyword in code:
                         idxs = []
                         # prev lines
-                        for i in range(-3, -0):
+                        for i in range(-4, -1):
                             i_idx = idx + i
                             if i_idx in idxs:
                                 continue
@@ -257,9 +257,7 @@ class Engine(object):
                             i_idx = idx + i
                             if i_idx in idxs:
                                 continue
-                            if i_idx > codes_len:
-                                continue
-                            if i_idx not in codes:
+                            if i_idx >= codes_len:
                                 continue
                             if codes[i_idx].strip() == '':
                                 continue
