@@ -237,7 +237,7 @@ class Engine(object):
                     if keyword in code:
                         idxs = []
                         # prev lines
-                        for i in range(-4, -1):
+                        for i in range(-3, -0):
                             i_idx = idx + i
                             if i_idx in idxs:
                                 continue
