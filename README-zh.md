@@ -91,4 +91,4 @@ $ crontab -e
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
-- [GSIL来龙去脉](http://feei.cn/gsil)
+- [GSIL详细介绍](http://feei.cn/gsil)
