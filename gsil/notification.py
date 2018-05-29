@@ -51,6 +51,8 @@ class Notification(object):
 
         text = MIMEText(html, 'html', 'utf-8')
         msg.attach(text)
+        host = get('mail', 'host').strip()
+        port = get('mail', 'port').strip()
 
         try:
             if port == '465':
