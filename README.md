@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## Configuration
 
-### gsil/config.gsil(Rename by config.gsil.example): Alarm mailbox and Guthub configuration
+### gsil/config.gsil(Rename by config.gsil.example): Alarm mailbox and Github configuration
 
 ```conf
 [mail]
