@@ -56,7 +56,7 @@ tokens : your_token
     # 一级分类，一般使用公司名，用作开启扫描的第一个参数（python gsil.py test）
     "test": {
         # 二级分类，一般使用产品线
-        "mogujie.com": {
+        "mogujie": {
             # 公司内部域名
             "\"mogujie.org\"": {
                 # mode/ext默认可不填
@@ -69,6 +69,10 @@ tokens : your_token
             "yewu1.db.mogujie.host": {},
             # 外部邮箱
             "mail.mogujie.com": {}
+        },
+        "meilishuo": {
+            "meilishuo.org": {},
+            "meilishuo.io": {}
         }
     }
 }
