@@ -56,7 +56,7 @@ tokens : your_token
     # usually using the company name, used as the first parameter to open the scan(Example:`python gsil.py test`)
     "test": {
         # General use of product name
-        "mogujie.com": {
+        "mogujie": {
             # Internal domain name of the company
             "\"mogujie.org\"": {
                 # mode/ext options no need to configure by default
@@ -69,6 +69,10 @@ tokens : your_token
             "yewu1.db.mogujie.host": {},
             # External mailbox
             "mail.mogujie.com": {}
+        },
+        "meilishuo": {
+            "meilishuo.org": {},
+            "meilishuo.io": {}
         }
     }
 }
