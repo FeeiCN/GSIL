@@ -32,6 +32,7 @@ to : feei@feei.cn
 
 [github]
 # 扫描到的是否立刻Clone到本地
+# 克隆到 ~/.gsil/codes/ 文件夹
 clone: false
 
 # GitHub Token用来调用相关API，多个Token使用逗号(,)分隔
