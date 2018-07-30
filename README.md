@@ -32,6 +32,7 @@ to : feei@feei.cn
 
 [github]
 # Whether the scanned data will be cloned to the local area immediately
+# Clone to ~/.gsil/codes/ directory
 clone: false
 
 # Github Token, multiple tokens are separated by comma (,)
