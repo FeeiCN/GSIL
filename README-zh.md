@@ -24,15 +24,15 @@ host : smtp.exmail.qq.com
 # SMTP端口(非SSL端口，但会使用TLS加密)
 port : 25
 # 多个发件人使用逗号(,)分隔
-mails : gsil@domain.com
+mails : gsil@feei.cn
 from : GSIL
 password : your_password
 # 多个收件人使用逗号(,)分隔
 to : feei@feei.cn
 
 [github]
-# 扫描到的是否立刻Clone到本地
-# 克隆到 ~/.gsil/codes/ 文件夹
+# 扫描到的漏洞仓库是否立刻Clone到本地（~/.gsil/codes/）
+# 此选项用作监控其它厂商，避免因为仓库所有者发现后被删除
 clone: false
 
 # GitHub Token用来调用相关API，多个Token使用逗号(,)分隔
