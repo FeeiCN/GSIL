@@ -56,11 +56,16 @@ class Notification(object):
 
         text = MIMEText(html, 'html', 'utf-8')
         msg.attach(text)
+        host = get('mail', 'host').strip()
+        port = get('mail', 'port').strip()
 
         try:
-            s = smtplib.SMTP(get('mail', 'host'), get('mail', 'port'))
-            s.ehlo()
-            s.starttls()
+            if port == '465':
+                s = smtplib.SMTP_SSL(host, port)
+            else:
+                s = smtplib.SMTP(host, port)
+                s.ehlo()
+                s.starttls()
             s.ehlo()
             s.login(mail, get('mail', 'password'))
             s.sendmail(mail, self.to.split(',')+self.cc.split(','), msg.as_string())

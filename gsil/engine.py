@@ -257,9 +257,7 @@ class Engine(object):
                             i_idx = idx + i
                             if i_idx in idxs:
                                 continue
-                            if i_idx > codes_len:
-                                continue
-                            if i_idx not in codes:
+                            if i_idx >= codes_len:
                                 continue
                             if codes[i_idx].strip() == '':
                                 continue

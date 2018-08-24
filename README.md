@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## Configuration
 
-### gsil/config.gsil: Alarm mailbox and Guthub configuration
+### gsil/config.gsil(Rename by config.gsil.example): Alarm mailbox and Github configuration
 
 ```conf
 [mail]
@@ -32,6 +32,7 @@ to : feei@feei.cn
 
 [github]
 # Whether the scanned data will be cloned to the local area immediately
+# Clone to ~/.gsil/codes/ directory
 clone: false
 
 # Github Token, multiple tokens are separated by comma (,)
@@ -39,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil: scanning rules
+### gsil/rules.gsil(Rename by rules.gsil.example): scanning rules
 
 > Generally, The best rule is the characteristic code of the intranet(Example: mogujie's extranet is `mogujie.com`, intranet is `mogujie.org`. At this time, `mogujie.org` can be used as a rule)
 
@@ -56,7 +57,7 @@ tokens : your_token
     # usually using the company name, used as the first parameter to open the scan(Example:`python gsil.py test`)
     "test": {
         # General use of product name
-        "mogujie.com": {
+        "mogujie": {
             # Internal domain name of the company
             "\"mogujie.org\"": {
                 # mode/ext options no need to configure by default
@@ -69,6 +70,10 @@ tokens : your_token
             "yewu1.db.mogujie.host": {},
             # External mailbox
             "mail.mogujie.com": {}
+        },
+        "meilishuo": {
+            "meilishuo.org": {},
+            "meilishuo.io": {}
         }
     }
 }
@@ -91,4 +96,4 @@ $ crontab -e
 * Once the scan report will not repeat the report, the cache records in ~/.gsil/ directory *
 
 ## Reference
-- http://feei.cn/GitHub敏感信息泄露监控
+- [GSIL详细介绍](http://feei.cn/gsil)

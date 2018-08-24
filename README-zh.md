@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## 配置
 
-### gsil/config.gsil: 告警邮箱和Github配置
+### gsil/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
 
 ```
 [mail]
@@ -24,14 +24,15 @@ host : smtp.exmail.qq.com
 # SMTP端口(非SSL端口，但会使用TLS加密)
 port : 25
 # 多个发件人使用逗号(,)分隔
-mails : gsil@domain.com
+mails : gsil@feei.cn
 from : GSIL
 password : your_password
 # 多个收件人使用逗号(,)分隔
 to : feei@feei.cn
 
 [github]
-# 扫描到的是否立刻Clone到本地
+# 扫描到的漏洞仓库是否立刻Clone到本地（~/.gsil/codes/）
+# 此选项用作监控其它厂商，避免因为仓库所有者发现后被删除
 clone: false
 
 # GitHub Token用来调用相关API，多个Token使用逗号(,)分隔
@@ -39,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil: 扫描规则
+### gsil/rules.gsil(重命名自rules.gsil.example): 扫描规则
 
 > 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
 
@@ -56,7 +57,7 @@ tokens : your_token
     # 一级分类，一般使用公司名，用作开启扫描的第一个参数（python gsil.py test）
     "test": {
         # 二级分类，一般使用产品线
-        "mogujie.com": {
+        "mogujie": {
             # 公司内部域名
             "\"mogujie.org\"": {
                 # mode/ext默认可不填
@@ -69,6 +70,10 @@ tokens : your_token
             "yewu1.db.mogujie.host": {},
             # 外部邮箱
             "mail.mogujie.com": {}
+        },
+        "meilishuo": {
+            "meilishuo.org": {},
+            "meilishuo.io": {}
         }
     }
 }
@@ -91,4 +96,4 @@ $ crontab -e
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
-- http://feei.cn/GitHub敏感信息泄露监控
+- [GSIL详细介绍](http://feei.cn/gsil)

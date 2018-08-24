@@ -213,7 +213,7 @@ class Config(object):
         if os.path.isdir(self.data_path) is not True:
             os.makedirs(self.data_path)
         self.run_data = os.path.join(home_path, 'run')
-        self.run_data_daily = os.path.join(home_path, 'run-{date}'.format(date=time.strftime('%m-%d')))
+        self.run_data_daily = os.path.join(home_path, 'run-{date}'.format(date=time.strftime('%y-%m-%d')))
 
     def hash_list(self):
         """
