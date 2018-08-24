@@ -5,6 +5,7 @@ mails : your_mail
 from : GSIL
 password : your_password
 to : feei@feei.cn
+cc : feei@feei.cn
 
 [github]
 clone: false

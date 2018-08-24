@@ -22,7 +22,7 @@ from .log import logger
 
 
 class Notification(object):
-    def __init__(self, subject, to=None):
+    def __init__(self, subject, to=None, cc=None):
         """
         Initialize notification class
         :param subject:
@@ -33,6 +33,10 @@ class Notification(object):
             self.to = get('mail', 'to')
         else:
             self.to = to
+        if cc is None:
+            self.cc = get('mail', 'cc')
+        else:
+            self.cc = cc
 
     def notification(self, html):
         """
@@ -48,6 +52,7 @@ class Notification(object):
         msg['From'] = '{0} <{1}>'.format(mail, get('mail', 'from'))
         # 支持多用户接收邮件
         msg['To'] = self.to
+        msg['Cc'] = self.cc
 
         text = MIMEText(html, 'html', 'utf-8')
         msg.attach(text)
@@ -58,7 +63,7 @@ class Notification(object):
             s.starttls()
             s.ehlo()
             s.login(mail, get('mail', 'password'))
-            s.sendmail(mail, self.to.split(','), msg.as_string())
+            s.sendmail(mail, self.to.split(',')+self.cc.split(','), msg.as_string())
             s.quit()
             return True
         except SMTPException:
