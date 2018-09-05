@@ -88,8 +88,13 @@ $ python gsil.py test
 ```bash
 $ crontab -e
 
+# 漏洞报告，此项任务发现漏洞后会立刻发送漏洞报告
 # 每个小时运行一次，GitHub API接口调用频率限制可以根据token数量、规则数量来调整crontab频率实现，若觉得麻烦可简单配置多个token来实现。
-0 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
+# crontab执行时间决定了报告的发送时效性，间隔越短报告越快但频率限制越容易触发
+# 建议配置5个token+20条规则，每10分钟运行一次
+*/10 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
+
+# 统计报告，发送一天的扫描进展，包括运行次数、成功次数、失败次数、发现漏洞数、各域名状况、异常等等
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
 ```
