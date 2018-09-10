@@ -94,6 +94,11 @@ def gsil():
     if sys.argv[1] == '--report':
         # send daily running data report
         send_running_data_report()
+    elif sys.argv[1] == '--verify-tokens':
+        # verify tokens
+        for i, token in enumerate(tokens):
+            ret, msg = Engine(token=token).verify()
+            logger.info('{i} {ret} token: {token} {msg}'.format(i=i, msg=msg, token=token, ret=ret))
     else:
         logger.info('start monitor github information leakage: {types}'.format(types=sys.argv[1]))
         # start

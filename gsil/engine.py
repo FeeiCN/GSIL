@@ -136,6 +136,13 @@ class Engine(object):
 
         return True
 
+    def verify(self):
+        try:
+            ret = self.g.rate_limiting
+            return True, 'TOKEN-PASSED: {r}'.format(r=ret)
+        except GithubException as e:
+            return False, 'TOKEN-FAILED: {r}'.format(r=e)
+
     def search(self, rule_object):
         """
         Search content by rule on GitHub

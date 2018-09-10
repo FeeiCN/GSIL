@@ -55,7 +55,7 @@ try:
     else:
         tokens = [tokens]
 except Exception as e:
-    logger.critical('github -> tokens sections error')
+    logger.critical('github -> tokens sections error {e}'.format(e=traceback.format_exc()))
     exit(0)
 
 exclude_repository_rules = [

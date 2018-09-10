@@ -83,6 +83,9 @@ tokens : your_token
 
 ```bash
 $ python gsil.py test
+
+# Verify tokens validity
+$ python gsil.py --verify-tokens
 ```
 
 ```bash

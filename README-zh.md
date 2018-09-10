@@ -82,7 +82,11 @@ tokens : your_token
 ## 用法
 
 ```bash
+# 启动测试
 $ python gsil.py test
+
+# 测试token有效性
+$ python gsil.py --verify-tokens
 ```
 
 ```bash
