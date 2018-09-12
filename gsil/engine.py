@@ -277,7 +277,7 @@ class Engine(object):
             return self.code.splitlines()[0:20]
 
     def _keywords(self):
-        if ' ' in self.rule_object.keyword:
+        if '"' not in self.rule_object.keyword and ' ' in self.rule_object.keyword:
             return self.rule_object.keyword.split(' ')
         else:
             if '"' in self.rule_object.keyword:
