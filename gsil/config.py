@@ -91,6 +91,7 @@ exclude_codes_rules = [
     r'(\]\()',
     r'(npm\.taobao\.org)',
     r'(HOST-SUFFIX)|(DOMAIN-SUFFIX)',
+    r'((\.(com|net|cn|co|org)[\s\S]*){4,})',
 ]
 
 public_mail_services = [
