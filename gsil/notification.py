@@ -61,6 +61,7 @@ class Notification(object):
 
         try:
             if port == '465':
+                port = int(port)
                 s = smtplib.SMTP_SSL(host, port)
             else:
                 s = smtplib.SMTP(host, port)
