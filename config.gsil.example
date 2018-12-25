@@ -8,5 +8,5 @@ to : feei@feei.cn
 cc : feei@feei.cn
 
 [github]
-clone: false
+clone : false
 tokens : your_github_token
