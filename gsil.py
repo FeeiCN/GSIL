@@ -17,8 +17,11 @@
 """
 import sys
 import traceback
+import ssl
+
 from gsil import gsil
 from gsil.notification import Notification
+ssl._create_default_https_context = ssl._create_unverified_context
 
 if __name__ == '__main__':
     try:
