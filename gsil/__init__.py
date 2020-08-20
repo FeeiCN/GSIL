@@ -22,23 +22,42 @@ from .config import Config, get_rules, tokens, daily_run_data
 from .process import send_running_data_report
 
 running_data = []
+token_dict = multiprocessing.Manager().dict()
+scan_rule_queue = multiprocessing.Queue()
+
+for t in tokens:
+    token_dict[t] = False
 
 
 # search single rule
-def search(idx, rule):
+def search(idx, lock):
     """
     class instance can't pickle in apply_async
     :param idx:
     :param rule:
     :return:
     """
-    token = random.choice(tokens)
-    try:
-        return Engine(token=token).search(rule)
-    except Exception as e:
-        traceback.print_exc()
-        return False, None, traceback.format_exc()
-
+    while True:
+        token = ''
+        lock.acquire()
+        for t in tokens:
+            if not token_dict[t]:
+                token = t
+                token_dict[t] = True
+                break
+        rule = scan_rule_queue.get()
+        lock.release()
+        if token == '':
+            logger.critical('subprocess more than token number!')
+            exit(0)
+        try:
+            ret = Engine(token=token).search(rule)
+            token_dict[token] = False
+            store_result(ret)
+            scan_rule_queue.put(rule)
+        except Exception as e:
+            traceback.print_exc()
+            #return False, None, traceback.format_exc()
 
 # store search result
 def store_result(result):
@@ -59,7 +78,6 @@ def store_result(result):
         # store list
         running_data.append([r_datetime, r_ret, rule, r_msg])
 
-
 # start
 def start(rule_types):
     rules = get_rules(rule_types)
@@ -67,10 +85,12 @@ def start(rule_types):
         logger.critical('get rules failed, rule types not found!')
         exit(0)
     logger.info('rules length: {rl}'.format(rl=len(rules)))
-    pool = multiprocessing.Pool()
+    lock = multiprocessing.Manager().Lock()
+    pool = multiprocessing.Pool(len(tokens))
     for idx, rule_object in enumerate(rules):
         logger.info('>>>>>>>>>>>>> {n} > {r} >>>>>>'.format(n=rule_object.corp, r=rule_object.keyword))
-        pool.apply_async(search, args=(idx, rule_object), callback=store_result)
+        scan_rule_queue.put(rule_object)
+        pool.apply_async(search, args=(idx, lock))
     pool.close()
     pool.join()
 
