@@ -142,7 +142,7 @@ class Engine(object):
             ret = self.g.rate_limiting
             return True, f'TOKEN-PASSED: {ret}'
         except GithubException as e:
-            return False, f'TOKEN-FAILED: {ret}'
+            return False, f'TOKEN-FAILED: FAILED'
 
     def search(self, rule_object):
         """
