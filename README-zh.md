@@ -1,6 +1,6 @@
 # GSIL(GitHub敏感信息泄露)
 
-[English documents](https://github.com/BlackHole1/GSIL/blob/master/README.md)
+[English documents](https://github.com/FeeiCN/GSIL/blob/master/README.md)
 
 > 近实时监控GitHub敏感信息泄露，并发送告警通知。
 
@@ -9,14 +9,14 @@
 > 仅在Python3下验证过
 
 ```bash
-$ git clone https://github.com/FeeiCN/gsil.git
-$ cd gsil/
+$ git clone https://github.com/FeeiCN/GSIL.git
+$ cd GSIL/
 $ pip install -r requirements.txt
 ```
 
 ## 配置
 
-### gsil/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
+### GSIL/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
 
 ```
 [mail]
@@ -40,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil(重命名自rules.gsil.example): 扫描规则
+### GSIL/rules.gsil(重命名自rules.gsil.example): 扫描规则
 
 > 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
 
@@ -96,11 +96,11 @@ $ crontab -e
 # 每个小时运行一次，GitHub API接口调用频率限制可以根据token数量、规则数量来调整crontab频率实现，若觉得麻烦可简单配置多个token来实现。
 # crontab执行时间决定了报告的发送时效性，间隔越短报告越快但频率限制越容易触发
 # 建议配置5个token+20条规则，每15分钟运行一次（可以配置更短，根据各自需求确定）
-*/15 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
+*/15 * * * * /usr/bin/python /var/app/GSIL/gsil.py test > /tmp/gsil
 
 # 统计报告，发送一天的扫描进展，包括运行次数、成功次数、失败次数、发现漏洞数、各域名状况、异常等等
 # 每天晚上11点发送统计报告
-0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
+0 23 * * * /usr/bin/python /var/app/GSIL/gsil.py --report
 ```
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
