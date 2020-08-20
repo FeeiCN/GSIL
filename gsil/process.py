@@ -36,12 +36,12 @@ class Process(object):
     def process(self, maybe_mistake=False):
         logger.info('Process count: {count}'.format(count=len(self.content)))
         ret_json = self._save_json_result()
-        #ret_mail = self._send_mail(maybe_mistake)
-        if ret_json:
+        ret_mail = self._send_mail(maybe_mistake)
+        if ret_json and ret_mail:
             for i, v in self.content.items():
                 Config().add_hash(v['hash'])
                 logger.debug('{hash} add success!'.format(hash=v['hash']))
-            logger.debug('save json success!')
+            logger.debug('save json and send mail success!')
         return ret_json
 
     def _send_mail(self, maybe_mistake=False):

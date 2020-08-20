@@ -435,7 +435,7 @@ class Engine(object):
             title = '<Unknown>'
             if is_inner_ip is False:
                 try:
-                    response = requests.get(domain, timeout=4, verify=False).content
+                    response = requests.get(domain, timeout=4).content
                 except Exception as e:
                     title = '<{msg}>'.format(msg=e)
                 else:
