@@ -2,7 +2,7 @@ import unittest
 from gsil.notification import Notification
 
 
-class TestNotification(unittest.TestCase):
+class Tests(unittest.TestCase):
     def test_notification(self):
         subject = 'test from GSIL'
         to = cc = 'feei@feei.cn'
