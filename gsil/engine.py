@@ -69,11 +69,12 @@ class Engine(object):
     def process_pages(self, pages_content, page, total):
         for index, content in enumerate(pages_content):
             current_i = page * per_page + index
-            base_info = '[{k}] [{current}/{count}]'.format(k=self.rule_object.keyword, current=current_i, count=total)
+            base_info = f'[{self.rule_object.keyword}] [{current_i}/{total}]'
 
             # 没有处理成功的，且遇到三个已处理的则跳过之后所有的
             if self.next_count == 0 and self.processed_count > 3:
-                logger.info('{b} Has encountered {pc} has been processed, skip the current rules!'.format(b=base_info, pc=self.processed_count))
+                logger.info(
+                    f'{base_info} Has encountered {self.processed_count} has been processed, skip the current rules!')
                 return False
 
             # html_url
@@ -83,13 +84,13 @@ class Engine(object):
             try:
                 self.sha = content.sha
             except Exception as e:
-                logger.warning('sha exception {e}'.format(e=e))
+                logger.warning(f'sha exception {e}')
                 self.sha = ''
                 self.url = ''
 
             if self.sha in self.hash_list:
                 # pass already processed
-                logger.info('{b} Processed, skip! ({pc})'.format(b=base_info, pc=self.processed_count))
+                logger.info(f'{base_info} Processed, skip! ({self.processed_count})')
                 self.processed_count += 1
                 continue
 
@@ -100,19 +101,19 @@ class Engine(object):
             self.full_name = content.repository.full_name.strip()
             if self._exclude_repository():
                 # pass exclude repository
-                logger.info('{b} Excluded because of the path, skip!'.format(b=base_info))
+                logger.info(f'{base_info} Excluded because of the path, skip!')
                 continue
 
             # code
             try:
                 self.code = content.decoded_content.decode('utf-8')
             except Exception as e:
-                logger.warning('Get Content Exception: {e} retrying...'.format(e=e))
+                logger.warning(f'Get Content Exception: {e} retrying...')
                 continue
 
             match_codes = self.codes()
             if len(match_codes) == 0:
-                logger.info('{b} Did not match the code, skip!'.format(b=base_info))
+                logger.info(f'{base_info} Did not match the code, skip!')
                 continue
             result = {
                 'url': self.url,
@@ -123,7 +124,7 @@ class Engine(object):
                 'path': self.path,
             }
             if self._exclude_codes(match_codes):
-                logger.info('{b} Code may be useless, do not skip, add to list to be reviewed!'.format(b=base_info))
+                logger.info(f'{base_info} Code may be useless, do not skip, add to list to be reviewed!')
                 self.exclude_result[current_i] = result
             else:
                 self.result[current_i] = result
@@ -131,7 +132,7 @@ class Engine(object):
             # 独立进程下载代码
             git_url = content.repository.html_url
             clone(git_url, self.sha)
-            logger.info('{b} Processing is complete, the next one!'.format(b=base_info))
+            logger.info(f'{base_info} Processing is complete, the next one!')
             self.next_count += 1
 
         return True
@@ -139,9 +140,9 @@ class Engine(object):
     def verify(self):
         try:
             ret = self.g.rate_limiting
-            return True, 'TOKEN-PASSED: {r}'.format(r=ret)
+            return True, f'TOKEN-PASSED: {ret}'
         except GithubException as e:
-            return False, 'TOKEN-FAILED: {r}'.format(r=e)
+            return False, f'TOKEN-FAILED: {ret}'
 
     def search(self, rule_object):
         """
@@ -167,26 +168,29 @@ class Engine(object):
             ext_query = ''
             if self.rule_object.extension is not None:
                 for ext in self.rule_object.extension.split(','):
-                    ext_query += 'extension:{ext} '.format(ext=ext.strip().lower())
-            keyword = '{keyword} {ext}'.format(keyword=self.rule_object.keyword, ext=ext_query)
-            logger.info('Search keyword: {k}'.format(k=keyword))
+                    ext_query += f'extension:{ext.strip().lower()} '
+            keyword = f'{self.rule_object.keyword} {ext_query}'
+            logger.info(f'Search keyword: {keyword}')
             resource = self.g.search_code(keyword, sort="indexed", order="desc")
         except GithubException as e:
-            msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+            msg = f'GitHub [search_code] exception(code: {e.status} msg: {e.data} {self.token}'
             logger.critical(msg)
             return False, self.rule_object, msg
 
-        logger.info('[{k}] Speed Limit Results (Remaining Times / Total Times): {rl}  Speed limit reset time: {rlr}'.format(k=self.rule_object.keyword, rl=rate_limiting, rlr=rate_limiting_reset_time))
-        logger.info('[{k}] The expected number of acquisitions: {page}(Pages) * {per}(Per Page) = {total}(Total)'.format(k=self.rule_object.keyword, page=default_pages, per=per_page, total=default_pages * per_page))
+        logger.info(
+            f'[{self.rule_object.keyword}] Speed Limit Results (Remaining Times / Total Times): {rate_limiting}  Speed limit reset time: {rate_limiting_reset_time}')
+        logger.info(
+            '[{k}] The expected number of acquisitions: {page}(Pages) * {per}(Per Page) = {total}(Total)'.format(
+                k=self.rule_object.keyword, page=default_pages, per=per_page, total=default_pages * per_page))
 
         # RATE_LIMIT_REQUEST: rules * 1
         try:
             total = resource.totalCount
-            logger.info('[{k}] The actual number: {count}'.format(k=self.rule_object.keyword, count=total))
+            logger.info(f'[{self.rule_object.keyword}] The actual number: {total}')
         except socket.timeout as e:
             return False, self.rule_object, e
         except GithubException as e:
-            msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+            msg = f'GitHub [search_code] exception(code: {e.status} msg: {e.data} {self.token}'
             logger.critical(msg)
             return False, self.rule_object, msg
 
@@ -202,14 +206,14 @@ class Engine(object):
                 # RATE_LIMIT_REQUEST: pages * rules * 1
                 pages_content = resource.get_page(page)
             except socket.timeout:
-                logger.info('[{k}] [get_page] Time out, skip to get the next page！'.format(k=self.rule_object.keyword))
+                logger.info(f'[{self.rule_object.keyword}] [get_page] Time out, skip to get the next page！')
                 continue
             except GithubException as e:
-                msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                msg = f'GitHub [get_page] exception(code: {e.status} msg: {e.data} {self.token}'
                 logger.critical(msg)
                 return False, self.rule_object, msg
 
-            logger.info('[{k}] Get page {page} data for {count}'.format(k=self.rule_object.keyword, page=page, count=len(pages_content)))
+            logger.info(f'[{self.rule_object.keyword}] Get page {page} data for {len(pages_content)}')
             if not self.process_pages(pages_content, page, total):
                 # 若遇到处理过的，则跳过整个规则
                 break
@@ -218,7 +222,8 @@ class Engine(object):
             # 暂时不发送可能存在的误报 TODO
             # Process(self.exclude_result, self.rule_object).process(True)
 
-        logger.info('[{k}] The current rules are processed, the process of normal exit!'.format(k=self.rule_object.keyword))
+        logger.info(
+            f'[{self.rule_object.keyword}] The current rules are processed, the process of normal exit!')
         return True, self.rule_object, len(self.result)
 
     def codes(self):
@@ -252,12 +257,12 @@ class Engine(object):
                                 continue
                             if codes[i_idx].strip() == '':
                                 continue
-                            logger.debug('P:{x}/{l}: {c}'.format(x=i_idx, l=codes_len, c=codes[i_idx]))
+                            logger.debug(f'P:{i_idx}/{codes_len}: {codes[i_idx]}')
                             idxs.append(i_idx)
                             match_codes.append(codes[i_idx])
                         # current line
                         if idx not in idxs:
-                            logger.debug('C:{x}/{l}: {c}'.format(x=idx, l=codes_len, c=codes[idx]))
+                            logger.debug(f'C:{idx}/{codes_len}: {codes[idx]}')
                             match_codes.append(codes[idx])
                         # next lines
                         for i in range(1, 4):
@@ -268,7 +273,7 @@ class Engine(object):
                                 continue
                             if codes[i_idx].strip() == '':
                                 continue
-                            logger.debug('N:{x}/{l}: {c}'.format(x=i_idx, l=codes_len, c=codes[i_idx]))
+                            logger.debug(f'N:{i_idx}/{codes_len}: {codes[i_idx]}')
                             idxs.append(i_idx)
                             match_codes.append(codes[i_idx])
             return match_codes
@@ -286,7 +291,7 @@ class Engine(object):
                 return [self.rule_object.keyword]
 
     def _mail(self):
-        logger.info('[{k}] mail rule'.format(k=self.rule_object.keyword))
+        logger.info(f'[{self.rule_object.keyword}] mail rule')
         match_codes = []
         mails = []
         # 找到所有邮箱地址
@@ -310,22 +315,22 @@ class Engine(object):
                 try:
                     top_domain = get_tld(host, fix_protocol=True)
                 except Exception as e:
-                    logger.warning('get top domain exception {msg}'.format(msg=e))
+                    logger.warning(f'get top domain exception {e}')
                     top_domain = host
                 if top_domain == host:
-                    domain = 'http://www.{host}'.format(host=host)
+                    domain = f'http://www.{host}'
                 else:
-                    domain = 'http://{host}'.format(host=host)
+                    domain = f'http://{host}'
             else:
                 if IP(host).iptype() == 'PRIVATE':
                     is_inner_ip = True
-                domain = 'http://{host}'.format(host=host)
+                domain = f'http://{host}'
             title = '<Unknown>'
             if is_inner_ip is False:
                 try:
                     response = requests.get(domain, timeout=4).content
                 except Exception as e:
-                    title = '<{msg}>'.format(msg=e)
+                    title = f'<{e}>'
                 else:
                     try:
                         soup = BeautifulSoup(response, "html5lib")
@@ -338,8 +343,8 @@ class Engine(object):
             else:
                 title = '<Inner IP>'
 
-            match_codes.append("{mail} {domain} {title}".format(mail=mail, domain=domain, title=title))
-            logger.info(' - {mail} {domain} {title}'.format(mail=mail, domain=domain, title=title))
+            match_codes.append(f"{mail} {domain} {title}")
+            logger.info(f' - {mail} {domain} {title}')
         return match_codes
 
     def _exclude_repository(self):
@@ -349,7 +354,7 @@ class Engine(object):
         """
         ret = False
         # 拼接完整的项目链接
-        full_path = '{repository}/{path}'.format(repository=self.full_name.lower(), path=self.path.lower())
+        full_path = f'{self.full_name.lower()}/{self.path.lower()}'
         for err in exclude_repository_rules:
             if re.search(err, full_path) is not None:
                 return True

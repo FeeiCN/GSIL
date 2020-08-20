@@ -45,7 +45,7 @@ def get(level1=None, level2=None):
     except Exception as e:
         print(level1, level2)
         traceback.print_exc()
-        print("GSIL/config.gsil.yaml file configure failed.\nError: {0}".format(e))
+        print(f"GSIL/config.gsil.yaml file configure failed.\nError: {e}")
     return value
 
 
@@ -57,7 +57,7 @@ try:
     else:
         tokens = [tokens]
 except Exception as e:
-    logger.critical('github -> tokens sections error {e}'.format(e=traceback.format_exc()))
+    logger.critical(f'github -> tokens sections error {traceback.format_exc()}')
     exit(0)
 
 exclude_repository_rules = [
@@ -232,7 +232,7 @@ class Config(object):
         :return: True
         """
         with open(self.hash_path, 'a') as f:
-            f.write('\r\n{line}'.format(line=sha))
+            f.write(f'\r\n{sha}')
         return True
 
     @staticmethod
@@ -249,7 +249,7 @@ class Config(object):
                 content = f.readlines()
             with open(destination, 'w+') as f:
                 f.writelines(content)
-            logger.info('Config file set success({source})'.format(source=source))
+            logger.info(f'Config file set success({source})')
         else:
             return
 

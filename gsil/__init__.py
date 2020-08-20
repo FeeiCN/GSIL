@@ -54,8 +54,8 @@ def store_result(result):
         if r_rule.corp.lower() in ['vulbox']:
             return
         with open(Config().run_data, 'a') as f:
-            rule = '[{t}][{c}][{k}]'.format(t=r_rule.types, c=r_rule.corp, k=r_rule.keyword)
-            f.write('{datetime} {ret} {rule} {msg}\r\n'.format(datetime=r_datetime, ret=r_ret, rule=rule, msg=r_msg))
+            rule = f'[{r_rule.types}][{r_rule.corp}][{r_rule.keyword}]'
+            f.write(f'{r_datetime} {r_ret} {rule} {r_msg}\r\n')
         # store list
         running_data.append([r_datetime, r_ret, rule, r_msg])
 
@@ -66,10 +66,10 @@ def start(rule_types):
     if len(rules) == 0:
         logger.critical('get rules failed, rule types not found!')
         exit(0)
-    logger.info('rules length: {rl}'.format(rl=len(rules)))
+    logger.info(f'rules length: {len(rules)}')
     pool = multiprocessing.Pool()
     for idx, rule_object in enumerate(rules):
-        logger.info('>>>>>>>>>>>>> {n} > {r} >>>>>>'.format(n=rule_object.corp, r=rule_object.keyword))
+        logger.info(f'>>>>>>>>>>>>> {rule_object.corp} > {rule_object.keyword} >>>>>>')
         pool.apply_async(search, args=(idx, rule_object), callback=store_result)
     pool.close()
     pool.join()
@@ -79,7 +79,7 @@ def start(rule_types):
 def generate_report(data):
     for rd in data:
         datetime, ret, rule, msg = rd
-        html = '<li> {datetime} {ret} {rule} {msg}</li>'.format(datetime=datetime, ret=ret, rule=rule, msg=msg)
+        html = f'<li> {datetime} {ret} {rule} {msg}</li>'
         run_data = daily_run_data()
         run_data['list'].append(html)
         if ret:
@@ -98,7 +98,7 @@ def gsil():
         # verify tokens
         for i, token in enumerate(tokens):
             ret, msg = Engine(token=token).verify()
-            logger.info('{i} {ret} token: {token} {msg}'.format(i=i, msg=msg, token=token, ret=ret))
+            logger.info(f'{i} {ret} token: {token} {msg}')
     else:
         logger.info('start monitor github information leakage: {types}'.format(types=sys.argv[1]))
         # start
