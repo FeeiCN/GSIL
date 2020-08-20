@@ -47,9 +47,10 @@ class Notification(object):
         # 随机挑选一个邮箱来发送，避免由于发送量过大导致被封
         mails = get('mail', 'mails').split(',')
         mail = random.choice(mails)
+        mail_from = get('mail', 'from')
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
-        msg['From'] = '{0} <{1}>'.format(mail, get('mail', 'from'))
+        msg['From'] = f'{mail} <{mail_from}>'
         # 支持多用户接收邮件
         msg['To'] = self.to
         msg['Cc'] = self.cc

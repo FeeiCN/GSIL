@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## 配置
 
-### GSIL/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
+### GSIL/config.gsil(复制config.gsil.example并重命名config.gsil): 告警邮箱和Github配置
 
 ```
 [mail]
@@ -40,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### GSIL/rules.gsil(重命名自rules.gsil.example): 扫描规则
+### GSIL/rules.gsil(复制rules.gsil.example并重命名rules.gsil): 扫描规则
 
 > 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
 

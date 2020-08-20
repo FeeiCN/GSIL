@@ -40,6 +40,7 @@ def get(level1=None, level2=None):
     value = None
     try:
         value = config.get(level1, level2)
+        value = value.strip()
     except Exception as e:
         print(level1, level2)
         traceback.print_exc()

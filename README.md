@@ -16,7 +16,7 @@ $ pip install -r requirements.txt
 
 ## Configuration
 
-### GSIL/config.gsil(Rename by config.gsil.example): Alarm mailbox and Github configuration
+### GSIL/config.gsil(Copy config.gsil.example to config.gsil): Alarm mailbox and Github configuration
 
 ```conf
 [mail]
@@ -40,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### GSIL/rules.gsil(Rename by rules.gsil.example): scanning rules
+### GSIL/rules.gsil(Copy rules.gsil.example to rules.gsil): scanning rules
 
 > Generally, The best rule is the characteristic code of the intranet(Example: mogujie's extranet is `mogujie.com`, intranet is `mogujie.org`. At this time, `mogujie.org` can be used as a rule)
 
