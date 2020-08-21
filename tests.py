@@ -33,10 +33,9 @@ class Tests(unittest.TestCase):
     def test_github_token(self):
         import base64
         from github import Github, BadCredentialsException
-
-        token = base64.b64decode('NGI0NTA5Y2Y2NWYxN2M4MjI0NDczODk3NzgzYzVkODBjNWEzNzMzMwo=').decode().strip()
-        g = Github(login_or_token=token)
-        self.assertRaises(BadCredentialsException, g.rate_limiting)
+        from gsil.config import tokens
+        g = Github(login_or_token=tokens[0])
+        self.assertIsInstance(g.rate_limiting, tuple)
 
     def test_clone(self):
         from gsil.process import clone
@@ -44,14 +43,33 @@ class Tests(unittest.TestCase):
 
     def test_generate_tests_honeypot_cases(self):
         import codecs
+        import string
+        import random
         from gsil.config import get_rules
         with codecs.open('honeypot/services.java', 'w', encoding='utf-8-sig') as f:
-            f.write("// 如果你的GitHub泄漏监控到此条记录，并且发现时间和本文件的最后修改时间大于十分钟，请扔掉你的GitHub泄漏监控，来使用https://github.com/FeeiCN/GSIL\r\n")
+            f.write(
+                "// 如果你的GitHub泄漏监控到此条记录，并且发现时间和本文件的最后修改时间大于十分钟，请扔掉你的GitHub泄漏监控，来使用https://github.com/FeeiCN/GSIL\r\n")
             f.write(
                 "// if your GitHub leak monitors this record, and the time of discovery and the last modification time of this file is greater than ten minutes, please discard it and use https://github.com/FeeiCN/GSIL\r\n")
             rules = get_rules('alibaba')
             for idx, rule_object in enumerate(rules):
-                f.write(f'http://gsil.honeypot.{rule_object.keyword}/api?appid=eQcZ8nR1bTFPNs1aEtP9XVMhLqNiIB&secretKey=bmkPGK7Bqnv7kbbBla4amaDvb8ImHQ\r\n')
+                appid = self.get_random_alphanumeric_string(10, 6)
+                secret_key = self.get_random_alphanumeric_string(25, 7)
+                f.write(
+                    f'http://gsil.honeypot.{rule_object.keyword}/api?appid={appid}&secretKey={secret_key}\r\n')
+
+    @staticmethod
+    def generate_random_key(letters_count, digits_count):
+        import random
+        import string
+        sample_str = ''.join((random.choice(string.ascii_letters) for i in range(letters_count)))
+        sample_str += ''.join((random.choice(string.digits) for i in range(digits_count)))
+
+        # Convert string to list and shuffle it to mix letters and digits
+        sample_list = list(sample_str)
+        random.shuffle(sample_list)
+        final_string = ''.join(sample_list)
+        return final_string
 
 
 if __name__ == '__main__':
