@@ -2,5 +2,5 @@ logs/
 .idea/
 .cache/
 *.pyc
-config.gsil
-rules.gsil
+config.gsil.cfg
+rules.gsil.yaml

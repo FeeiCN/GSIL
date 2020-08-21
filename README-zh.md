@@ -1,6 +1,6 @@
 # GSIL(GitHub敏感信息泄露)
 
-[English documents](https://github.com/BlackHole1/GSIL/blob/master/README.md)
+[English documents](https://github.com/FeeiCN/GSIL/blob/master/README.md)
 
 > 近实时监控GitHub敏感信息泄露，并发送告警通知。
 
@@ -9,14 +9,14 @@
 > 仅在Python3下验证过
 
 ```bash
-$ git clone https://github.com/FeeiCN/gsil.git
-$ cd gsil/
+$ git clone https://github.com/FeeiCN/GSIL.git
+$ cd GSIL/
 $ pip install -r requirements.txt
 ```
 
 ## 配置
 
-### gsil/config.gsil(重命名自config.gsil.example): 告警邮箱和Github配置
+### gsil/config.gsil.cfg(复制config.gsil.cfg.example并重命名): 告警邮箱和Github配置
 
 ```
 [mail]
@@ -40,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil(重命名自rules.gsil.example): 扫描规则
+### gsil/rules.gsil.yaml(复制rules.gsil.yaml.example并重命名): 扫描规则
 
 > 规则一般选用内网独立的特征，比如蘑菇街的外网是mogujie.com，蘑菇街的内网是mogujie.org，则可以将mogujie.org作为一条规则。
 

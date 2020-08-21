@@ -14,6 +14,7 @@
 import os
 import time
 import json
+import yaml
 import traceback
 import configparser
 from .log import logger
@@ -21,8 +22,8 @@ from .log import logger
 home_path = os.path.join(os.path.expandvars(os.path.expanduser("~")), ".gsil")
 code_path = os.path.join(home_path, 'codes')
 project_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-config_path = os.path.join(project_directory, 'config.gsil')
-rules_path = os.path.join(project_directory, 'rules.gsil')
+config_path = os.path.join(project_directory, 'config.gsil.cfg')
+rules_path = os.path.join(project_directory, 'rules.gsil.yaml')
 
 
 def get(level1=None, level2=None):
@@ -43,7 +44,7 @@ def get(level1=None, level2=None):
     except Exception as e:
         print(level1, level2)
         traceback.print_exc()
-        print("GSIL/config.gsil file configure failed.\nError: {0}".format(e))
+        print("GSIL/config.gsil.cfg file configure failed.\nError: {0}".format(e))
     return value
 
 
@@ -141,10 +142,10 @@ public_mail_services = [
 # }
 #
 try:
-    with open(rules_path) as f:
-        rules_dict = json.load(f)
+    with open(rules_path, 'r') as f:
+        rules_dict = yaml.safe_load(f)
 except Exception as e:
-    logger.critical('please config GSIL/rules.gsil!')
+    logger.critical('please config GSIL/rules.gsil.yaml!')
     logger.critical(traceback.format_exc())
 
 

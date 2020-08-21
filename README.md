@@ -9,14 +9,14 @@
 > Python3(Python2 is not tested)
 
 ```bash
-$ git clone https://github.com/FeeiCN/gsil.git
-$ cd gsil/
+$ git clone https://github.com/FeeiCN/GSIL.git
+$ cd GSIL/
 $ pip install -r requirements.txt
 ```
 
 ## Configuration
 
-### gsil/config.gsil(Rename by config.gsil.example): Alarm mailbox and Github configuration
+### gsil/config.gsil(Copy config.gsil.cfg.example): Alarm mailbox and Github configuration
 
 ```conf
 [mail]
@@ -40,7 +40,7 @@ clone: false
 tokens : your_token
 ```
 
-### gsil/rules.gsil(Rename by rules.gsil.example): scanning rules
+### gsil/rules.gsil.yaml(Copy rules.gsil.yaml.example): scanning rules
 
 > Generally, The best rule is the characteristic code of the intranet(Example: mogujie's extranet is `mogujie.com`, intranet is `mogujie.org`. At this time, `mogujie.org` can be used as a rule)
 

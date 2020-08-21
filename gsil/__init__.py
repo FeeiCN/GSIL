@@ -55,9 +55,12 @@ def search(idx, lock):
             token_dict[token] = False
             store_result(ret)
             scan_rule_queue.put(rule)
+        except KeyboardInterrupt as e:
+            raise
         except Exception as e:
             traceback.print_exc()
-            #return False, None, traceback.format_exc()
+            # return False, None, traceback.format_exc()
+
 
 # store search result
 def store_result(result):
@@ -77,6 +80,7 @@ def store_result(result):
             f.write('{datetime} {ret} {rule} {msg}\r\n'.format(datetime=r_datetime, ret=r_ret, rule=rule, msg=r_msg))
         # store list
         running_data.append([r_datetime, r_ret, rule, r_msg])
+
 
 # start
 def start(rule_types):
