@@ -214,6 +214,7 @@ class Config(object):
             os.makedirs(self.data_path)
         self.run_data = os.path.join(home_path, 'run')
         self.run_data_daily = os.path.join(home_path, 'run-{date}'.format(date=time.strftime('%y-%m-%d')))
+        self.json_data = os.path.join(home_path, 'json')
 
     def hash_list(self):
         """

@@ -88,21 +88,15 @@ $ python gsil.py test
 # 测试token有效性
 $ python gsil.py --verify-tokens
 ```
+**GSIL 由原来的 crontab 启动改为了常驻进程，有多少个 token 将启动多少个子进程，建议使用 supervisor 去管理而不是使用命令行。**
 
+如果你只是测试，可以使用如下命令：
 ```bash
-$ crontab -e
-
-# 漏洞报告，此项任务发现漏洞后会立刻发送漏洞报告
-# 每个小时运行一次，GitHub API接口调用频率限制可以根据token数量、规则数量来调整crontab频率实现，若觉得麻烦可简单配置多个token来实现。
-# crontab执行时间决定了报告的发送时效性，间隔越短报告越快但频率限制越容易触发
-# 建议配置5个token+20条规则，每15分钟运行一次（可以配置更短，根据各自需求确定）
-*/15 * * * * /usr/bin/python /var/app/gsil/gsil.py test > /tmp/gsil
-
-# 统计报告，发送一天的扫描进展，包括运行次数、成功次数、失败次数、发现漏洞数、各域名状况、异常等等
-# 每天晚上11点发送统计报告
-0 23 * * * /usr/bin/python /var/app/gsil/gsil.py --report
+$ python gsil.py test
 ```
-*扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
+* 扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录
+
+* ~/.gsil/目录增加json格式的扫描结果，可使用 Kafka 等进行消费
 
 ## 引用
 - [GSIL详细介绍](http://feei.cn/gsil)

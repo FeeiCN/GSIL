@@ -12,6 +12,7 @@
     :copyright: Copyright (c) 2018 Feei. All rights reserved
 """
 import re
+import time
 import socket
 import traceback
 import requests
@@ -40,7 +41,9 @@ per_page = 50
 # 2 * 30 * 24 = 1440
 #
 # 默认扫描页数
-default_pages = 4
+default_pages = 1000
+# 默认最大扫描页数，github限制最大1000页
+default_max_total = 1000
 
 
 class Engine(object):
@@ -66,73 +69,113 @@ class Engine(object):
         self.processed_count = None
         self.next_count = None
 
+    def __retry_process_pages(self, page, total, index, content):
+        time.sleep(2)
+        current_i = page * per_page + index
+        base_info = '[{k}] [{current}/{count}]'.format(k=self.rule_object.keyword, current=current_i, count=total)
+
+        # 没有处理成功的，且遇到三个已处理的则跳过之后所有的
+        if self.processed_count > 3:
+            logger.info('{b} Has encountered {pc} has been processed, skip the current rules!'.format(b=base_info,
+                                                                                                      pc=self.processed_count))
+            return False
+
+        # html_url
+        self.url = content.html_url
+
+        # sha
+        try:
+            self.sha = content.sha
+        except Exception as e:
+            logger.warning('sha exception {e}'.format(e=e))
+            self.sha = ''
+            self.url = ''
+
+        if self.sha in self.hash_list:
+            # pass already processed
+            logger.info('{b} Processed, skip! ({pc})'.format(b=base_info, pc=self.processed_count))
+            self.processed_count += 1
+            return True
+        else:
+            self.processed_count = 0
+
+        # path
+        self.path = content.path
+
+        # full name
+        self.full_name = content.repository.full_name.strip()
+        if self._exclude_repository():
+            # pass exclude repository
+            logger.info('{b} Excluded because of the path, skip!'.format(b=base_info))
+            return True
+
+        # code
+        try:
+            self.code = content.decoded_content.decode('utf-8')
+        except Exception as e:
+            logger.warning('Get Content Exception: {e} retrying...'.format(e=e))
+            return True
+
+        match_codes = self.codes()
+        if len(match_codes) == 0:
+            logger.info('{b} Did not match the code, skip!'.format(b=base_info))
+            return True
+        result = {
+            'url': self.url,
+            'match_codes': match_codes,
+            'hash': self.sha,
+            'code': self.code,
+            'repository': self.full_name,
+            'path': self.path,
+        }
+        if self._exclude_codes(match_codes):
+            logger.info('{b} Code may be useless, do not skip, add to list to be reviewed!'.format(b=base_info))
+            self.exclude_result[current_i] = result
+        else:
+            self.result[current_i] = result
+
+        # 独立进程下载代码
+        git_url = content.repository.html_url
+        clone(git_url, self.sha)
+        logger.info('{b} Processing is complete, the next one!'.format(b=base_info))
+        self.next_count += 1
+        return True
+
     def process_pages(self, pages_content, page, total):
+        loop_continue = True
         for index, content in enumerate(pages_content):
-            current_i = page * per_page + index
-            base_info = '[{k}] [{current}/{count}]'.format(k=self.rule_object.keyword, current=current_i, count=total)
-
-            # 没有处理成功的，且遇到三个已处理的则跳过之后所有的
-            if self.next_count == 0 and self.processed_count > 3:
-                logger.info('{b} Has encountered {pc} has been processed, skip the current rules!'.format(b=base_info, pc=self.processed_count))
-                return False
-
-            # html_url
-            self.url = content.html_url
-
-            # sha
-            try:
-                self.sha = content.sha
-            except Exception as e:
-                logger.warning('sha exception {e}'.format(e=e))
-                self.sha = ''
-                self.url = ''
-
-            if self.sha in self.hash_list:
-                # pass already processed
-                logger.info('{b} Processed, skip! ({pc})'.format(b=base_info, pc=self.processed_count))
-                self.processed_count += 1
-                continue
-
-            # path
-            self.path = content.path
-
-            # full name
-            self.full_name = content.repository.full_name.strip()
-            if self._exclude_repository():
-                # pass exclude repository
-                logger.info('{b} Excluded because of the path, skip!'.format(b=base_info))
-                continue
-
-            # code
-            try:
-                self.code = content.decoded_content.decode('utf-8')
-            except Exception as e:
-                logger.warning('Get Content Exception: {e} retrying...'.format(e=e))
-                continue
-
-            match_codes = self.codes()
-            if len(match_codes) == 0:
-                logger.info('{b} Did not match the code, skip!'.format(b=base_info))
-                continue
-            result = {
-                'url': self.url,
-                'match_codes': match_codes,
-                'hash': self.sha,
-                'code': self.code,
-                'repository': self.full_name,
-                'path': self.path,
-            }
-            if self._exclude_codes(match_codes):
-                logger.info('{b} Code may be useless, do not skip, add to list to be reviewed!'.format(b=base_info))
-                self.exclude_result[current_i] = result
-            else:
-                self.result[current_i] = result
-
-            # 独立进程下载代码
-            git_url = content.repository.html_url
-            clone(git_url, self.sha)
-            logger.info('{b} Processing is complete, the next one!'.format(b=base_info))
-            self.next_count += 1
+            while loop_continue:
+                try:
+                    loop_continue = self.__retry_process_pages(page, total, index, content)
+                    if not loop_continue:
+                        logger.info('skip {k} rules!'.format(k=self.rule_object.keyword))
+                        return False
+                    else:
+                        break
+                except socket.timeout:
+                    msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                    logger.warning(msg)
+                    time.sleep(10)
+                except ConnectionRefusedError:
+                    msg = 'GitHub [process_pages] exception(ConnectionRefusedError),retrying...'
+                    logger.warning(msg)
+                    time.sleep(10)
+                except ConnectionResetError:
+                    msg = 'GitHub [process_pages] exception(ConnectionRefusedError),retrying...'
+                    logger.warning(msg)
+                    time.sleep(10)
+                except GithubException as e:
+                    if 'API rate limit exceeded' in str(e.data) or 'wait a few minutes' in str(e.data):
+                        logger.warning('GitHub [process_pages] trigger request rate limit, sleep a few seconds')
+                        time.sleep(20)
+                    else:
+                        msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                        logger.critical(msg)
+                        return False, self.rule_object, msg
+                except Exception as e:
+                    msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                    logger.critical(msg)
+                    return False, self.rule_object, msg
 
         return True
 
@@ -156,39 +199,87 @@ class Engine(object):
         # 处理成功的数量
         self.next_count = 0
 
-        # max 5000 requests/H
-        try:
-            rate_limiting = self.g.rate_limiting
-            rate_limiting_reset_time = self.g.rate_limiting_resettime
-            logger.info('----------------------------')
+        # max 30 requests/min
+        while True:
+            try:
+                time.sleep(2)
+                rate_limiting = self.g.rate_limiting
+                time.sleep(2)
+                rate_limiting_reset_time = self.g.rate_limiting_resettime
+                logger.info('----------------------------')
 
-            # RATE_LIMIT_REQUEST: rules * 1
-            # https://developer.github.com/v3/search/#search-code
-            ext_query = ''
-            if self.rule_object.extension is not None:
-                for ext in self.rule_object.extension.split(','):
-                    ext_query += 'extension:{ext} '.format(ext=ext.strip().lower())
-            keyword = '{keyword} {ext}'.format(keyword=self.rule_object.keyword, ext=ext_query)
-            logger.info('Search keyword: {k}'.format(k=keyword))
-            resource = self.g.search_code(keyword, sort="indexed", order="desc")
-        except GithubException as e:
-            msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
-            logger.critical(msg)
-            return False, self.rule_object, msg
+                # RATE_LIMIT_REQUEST: rules * 1
+                # https://developer.github.com/v3/search/#search-code
+                ext_query = ''
+                if self.rule_object.extension is not None:
+                    for ext in self.rule_object.extension.split(','):
+                        ext_query += 'extension:{ext} '.format(ext=ext.strip().lower())
+                keyword = '{keyword} {ext}'.format(keyword=self.rule_object.keyword, ext=ext_query)
+                logger.info('Search keyword: {k}'.format(k=keyword))
+                time.sleep(2)
+                resource = self.g.search_code(keyword, sort="indexed", order="desc")
+                break
+            except GithubException as e:
+                if 'API rate limit exceeded' in str(e.data) or 'wait a few minutes' in str(e.data):
+                    logger.warning('GitHub [process_pages] trigger request rate limit, sleep a few seconds')
+                    time.sleep(20)
+                else:
+                    msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                    logger.critical(msg)
+                    return False, self.rule_object, msg
+            except socket.timeout:
+                msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                logger.warning(msg)
+                time.sleep(10)
+            except ConnectionRefusedError:
+                msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                logger.warning(msg)
+                time.sleep(10)
+            except ConnectionResetError:
+                msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                logger.warning(msg)
+                time.sleep(10)
+            except Exception as e:
+                msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                logger.critical(msg)
+                return False, self.rule_object, msg
 
         logger.info('[{k}] Speed Limit Results (Remaining Times / Total Times): {rl}  Speed limit reset time: {rlr}'.format(k=self.rule_object.keyword, rl=rate_limiting, rlr=rate_limiting_reset_time))
         logger.info('[{k}] The expected number of acquisitions: {page}(Pages) * {per}(Per Page) = {total}(Total)'.format(k=self.rule_object.keyword, page=default_pages, per=per_page, total=default_pages * per_page))
 
         # RATE_LIMIT_REQUEST: rules * 1
-        try:
-            total = resource.totalCount
-            logger.info('[{k}] The actual number: {count}'.format(k=self.rule_object.keyword, count=total))
-        except socket.timeout as e:
-            return False, self.rule_object, e
-        except GithubException as e:
-            msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
-            logger.critical(msg)
-            return False, self.rule_object, msg
+        while True:
+            try:
+                time.sleep(2)
+                total = resource.totalCount
+                if total > 1000:
+                    total = default_max_total
+                    logger.info('[{k}] The actual number: {count}, bigger than default max total: {max}'.format(k=self.rule_object.keyword, count=total, max=default_max_total))
+                else:
+                    logger.info('[{k}] The actual number: {count}'.format(k=self.rule_object.keyword, count=total))
+                break
+            except socket.timeout as e:
+                return False, self.rule_object, e
+            except GithubException as e:
+                if 'API rate limit exceeded' in str(e.data) or 'wait a few minutes' in str(e.data):
+                    logger.warning('GitHub [process_pages] trigger request rate limit, sleep a few seconds')
+                    time.sleep(20)
+                else:
+                    msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                    logger.critical(msg)
+                    return False, self.rule_object, msg
+            except ConnectionRefusedError:
+                msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                logger.warning(msg)
+                time.sleep(10)
+            except ConnectionResetError:
+                msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                logger.warning(msg)
+                time.sleep(10)
+            except Exception as e:
+                msg = 'GitHub [search_code] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                logger.critical(msg)
+                return False, self.rule_object, msg
 
         self.hash_list = Config().hash_list()
         if total < per_page:
@@ -198,16 +289,35 @@ class Engine(object):
         for page in range(pages):
             self.result = {}
             self.exclude_result = {}
-            try:
-                # RATE_LIMIT_REQUEST: pages * rules * 1
-                pages_content = resource.get_page(page)
-            except socket.timeout:
-                logger.info('[{k}] [get_page] Time out, skip to get the next page！'.format(k=self.rule_object.keyword))
-                continue
-            except GithubException as e:
-                msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
-                logger.critical(msg)
-                return False, self.rule_object, msg
+            while True:
+                try:
+                    # RATE_LIMIT_REQUEST: pages * rules * 1
+                    time.sleep(2)
+                    pages_content = resource.get_page(page)
+                    break
+                except socket.timeout:
+                    logger.info('[{k}] [get_page] Time out, skip to get the next page！'.format(k=self.rule_object.keyword))
+                    continue
+                except GithubException as e:
+                    if 'API rate limit exceeded' in str(e.data) or 'wait a few minutes' in str(e.data):
+                        logger.warning('GitHub [process_pages] trigger request rate limit, sleep a few seconds')
+                        time.sleep(20)
+                    else:
+                        msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                        logger.critical(msg)
+                        return False, self.rule_object, msg
+                except ConnectionRefusedError:
+                    msg = 'GitHub [search_code] exception(ConnectionRefusedError),retrying...'
+                    logger.warning(msg)
+                    time.sleep(10)
+                except ConnectionResetError:
+                    msg = 'GitHub [search_code] exception(ConnectionResetError),retrying...'
+                    logger.warning(msg)
+                    time.sleep(10)
+                except Exception as e:
+                    msg = 'GitHub [get_page] exception(code: {c} msg: {m} {t}'.format(c=e.status, m=e.data, t=self.token)
+                    logger.critical(msg)
+                    return False, self.rule_object, msg
 
             logger.info('[{k}] Get page {page} data for {count}'.format(k=self.rule_object.keyword, page=page, count=len(pages_content)))
             if not self.process_pages(pages_content, page, total):
@@ -230,6 +340,8 @@ class Engine(object):
         match_codes = []
         if self.rule_object.mode == 'mail':
             return self._mail()
+        elif self.rule_object.mode == 'full-match':
+            return codes
         elif self.rule_object.mode == 'only-match':
             # only match mode(只匹配存在关键词的行)
             for code in codes:
