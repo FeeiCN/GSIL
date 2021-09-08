@@ -37,6 +37,8 @@ clone: false
 
 # GitHub Token用来调用相关API，多个Token使用逗号(,)分隔
 # https://github.com/settings/tokens
+# GitHub已调整最新的速度限制，请求数量大幅降低，单账户多Token将共享限速，详见https://docs.github.com/en/rest/reference/search#rate-limit 以及 https://docs.github.com/en/rest/reference/rate-limit
+# 建议你根据关键词数量配置多个GitHub账户的Token以避免超速
 tokens : your_token
 ```
 
@@ -102,7 +104,9 @@ $ crontab -e
 # 每天晚上11点发送统计报告
 0 23 * * * /usr/bin/python /var/app/GSIL/gsil.py --report
 ```
+
 *扫描报告过一次的将不会重复报告，缓存记录在~/.gsil/目录*
 
 ## 引用
+
 - [GSIL详细介绍](http://feei.cn/gsil)
