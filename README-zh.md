@@ -109,4 +109,4 @@ $ crontab -e
 
 ## 引用
 
-- [GSIL详细介绍](http://feei.cn/gsil)
+- [GSIL详细介绍](https://github.com/FeeiCN/GSIL/wiki)
