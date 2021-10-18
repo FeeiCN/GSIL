@@ -99,4 +99,4 @@ $ crontab -e
 * Once the scan report will not repeat the report, the cache records in ~/.gsil/ directory *
 
 ## Reference
-- [GSIL详细介绍](http://feei.cn/gsil)
+- [GSIL详细介绍](https://github.com/FeeiCN/GSIL/wiki)
