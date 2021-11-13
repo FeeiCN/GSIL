@@ -29,6 +29,7 @@ from : GSIL
 password : your_password
 # Multiple recipients are separated by comma (,)
 to : feei@feei.cn
+cc : feei@feei.cn
 
 [github]
 # Whether the scanned data will be cloned to the local area immediately
