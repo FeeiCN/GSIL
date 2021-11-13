@@ -29,6 +29,7 @@ from : GSIL
 password : your_password
 # 多个收件人使用逗号(,)分隔
 to : feei@feei.cn
+cc : feei@feei.cn
 
 [github]
 # 扫描到的漏洞仓库是否立刻Clone到本地（~/.gsil/codes/）
