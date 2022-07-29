@@ -13,7 +13,6 @@
 """
 import sys
 import time
-import random
 import traceback
 import multiprocessing
 from .engine import Engine
@@ -52,9 +51,11 @@ def search(idx, lock):
             exit(0)
         try:
             ret = Engine(token=token).search(rule)
+            lock.acquire()
             token_dict[token] = False
             store_result(ret)
             scan_rule_queue.put(rule)
+            lock.release()
         except Exception as e:
             traceback.print_exc()
             #return False, None, traceback.format_exc()
